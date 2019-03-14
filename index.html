@@ -8,11 +8,72 @@
     <link rel="stylesheet" type="text/css" href="./assets/css/style.css">
 </head>
 <body>
-	
-	<script type="text/javascript">
+
+    Star Wars RPG!
+    <!-- starting character list -->
+    <div id="starters">
+        <img src="http://cdn.playbuzz.com/cdn/35910209-2844-45c0-b099-f4d82878d54f/00261fda-4062-4096-81fd-8cf96b9034e8.jpg" style="width:150px; height:150px; margin-right:15px" class="test">
+        <img src="http://cdn.playbuzz.com/cdn/35910209-2844-45c0-b099-f4d82878d54f/00261fda-4062-4096-81fd-8cf96b9034e8.jpg" style="width:150px; height:150px; margin-right:15px" class="test">
+        <img src="http://cdn.playbuzz.com/cdn/35910209-2844-45c0-b099-f4d82878d54f/00261fda-4062-4096-81fd-8cf96b9034e8.jpg" style="width:150px; height:150px; margin-right:15px" class="test">
+    </div>
+    Your Character
+    <div id="your-character"></div>
+    Enemies Available to Attack
+    <div id="enemies-available"></div>
+    Fight Section
+    [Attack button]
+    Defender
+    <div id="defender"></div>
+    <div id="results-txt"></div>
+
+    <!--
+        game starts with 4 characters in starting character list - w/ varying hp, image has border and bg color
+        if win and no enemies left, print "You won!!!! GAME OVER!!!"
+        how to reset?
+    -->
+    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    
+        $("#starters").on("click", ".test", function () { //create image class for all 4 characters
+            console.log("Hi");
+            $(this).detach().appendTo("#your-character"); //moves clicked character to "Your Character" and others move to "Enemies Available to Attack"
+            $(".test").not($(this)).detach().appendTo("#enemies-available");
+        });
+
+        $("#enemies-available").on("click", ".test", function () {
+            console.log("Hello");
+            $(this).detach().appendTo("#defender"); //moves clicked character to "Defender"
+            $("#results-txt").empty();
+        });
+
+        //when attack button clicked
+        /*  
+        if (playerhp > 0) {
+            if (defender not empty) {
+                if (defenderhp > 0) {
+                    newattackpower += attackpower //each subsequent "Attack" click increases attack power
+                    defenderhp -= newattackpower
+                    playerhp -= defenderattackpower
+                    $("#results-txt").text("You attacked " + [Defender character] + " for " + newattackpower + " damage.<br>" + [Defender character] + " attacked you back for " + defenderattackpower + " damage.")
+                    //update playerhp text and defenderhp text
+                } else if (defenderhp <= 0 && enemies available left) {
+                    //remove defender
+                     $("#results-txt").text("You have defeated [Defender character], you can choose to fight another enemy");
+                }
+            } else if (playerhp > 0 && defender empty) {
+                $("#results-txt").text("No enemy here");
+            }
+        } else if (playerhp <= 0) {
+            $("#results-txt").text("You have been defeated...GAME OVER!!!");
+            //append restart button - on click will call reset function
+        }
+        */
+            
+
 	</script>
 	
-    <script src="./assets/javascript/game.js"></script>
+    <!-- <script src="./assets/javascript/game.js"></script> -->
 </body>
 </html>
 
@@ -43,16 +104,4 @@
 * No characters in the game can heal or recover Health Points. 
   * A winning player must pick their characters wisely by first fighting an enemy with low `Counter Attack Power`. This will allow them to grind `Attack Power` and to take on enemies before they lose all of their `Health Points`. Healing options would mess with this dynamic.
 * Your players should be able to win and lose the game no matter what character they choose. The challenge should come from picking the right enemies, not choosing the strongest player.
-### Reminder: Submission on BCS
-* Please submit both the deployed Github.io link to your homework AND the link to the Github Repository!
-- - -
-
-### Create a README.md
-Add a `README.md` to your repository describing the project. Here are some resources for creating your `README.md`. Here are some resources to help you along the way:
-* [About READMEs](https://help.github.com/articles/about-readmes/)
-* [Mastering Markdown](https://guides.github.com/features/mastering-markdown/)
-- - -
-
-### Add To Your Portfolio
-After completing the homework please add the piece to your portfolio. Make sure to add a link to your updated portfolio in the comments section of your homework so the TAs can easily ensure you completed this step when they are grading the assignment. To receive an 'A' on any assignment, you must link to it from your portfolio.
 -->
