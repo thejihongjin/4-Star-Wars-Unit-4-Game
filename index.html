@@ -6,70 +6,157 @@
     <title>Page Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="./assets/css/style.css">
+
+    <style type="text/css">
+        .fighter-img {
+            width: 150px;
+            height: 150px;
+			margin-right: 5px;
+        }
+    </style>
 </head>
 <body>
 
-    Star Wars RPG!
+    Star Wars RPG!<br>
     <!-- starting character list -->
-    <div id="starters">
-        <img src="http://cdn.playbuzz.com/cdn/35910209-2844-45c0-b099-f4d82878d54f/00261fda-4062-4096-81fd-8cf96b9034e8.jpg" style="width:150px; height:150px; margin-right:15px" class="test">
-        <img src="http://cdn.playbuzz.com/cdn/35910209-2844-45c0-b099-f4d82878d54f/00261fda-4062-4096-81fd-8cf96b9034e8.jpg" style="width:150px; height:150px; margin-right:15px" class="test">
-        <img src="http://cdn.playbuzz.com/cdn/35910209-2844-45c0-b099-f4d82878d54f/00261fda-4062-4096-81fd-8cf96b9034e8.jpg" style="width:150px; height:150px; margin-right:15px" class="test">
-    </div>
-    Your Character
-    <div id="your-character"></div>
-    Enemies Available to Attack
+    <div id="fighters"></div>
+    Your Character<br>
+    <div id="player"></div>
+    Enemies Available to Attack<br>
     <div id="enemies-available"></div>
-    Fight Section
-    [Attack button]
-    Defender
+    Fight Section<br>
+    <button class="attack">Attack</button><br>
+    Defender<br>
     <div id="defender"></div>
     <div id="results-txt"></div>
 
-    <!--
-        game starts with 4 characters in starting character list - w/ varying hp, image has border and bg color
-        if win and no enemies left, print "You won!!!! GAME OVER!!!"
-        how to reset?
-    -->
-    
+<!-- 
+
+-->
+
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript">
+	var fightersArr = [
+		{
+			name: 'Obi-Wan Kenobi',
+			health: 120,
+			attack: 8,
+			counter: 8,
+			src: 'obi-wan-kenobi.jpg'
+		},
+		{
+			name: 'Luke Skywalker',
+			health: 100,
+			attack: 5,
+			counter: 5,
+			src: 'luke_skywalker.jpg'
+		},
+		{
+			name: 'Darth Sidious',
+			health: 150,
+			attack: 20,
+			counter: 10,//20,
+			src: 'darth-sidious.jpg'
+		},
+		{
+			name: 'Darth Maul',
+			health: 180,
+			attack: 25,
+			counter: 25,
+			src: 'darth-maul.png'
+		},
+	]
+	
+	$("#player").empty();
+	$("#enemies-available").empty();
+	$("#defender").empty();
+	$("#results-txt").empty();
+	generateFighters();
+	var playerName = '';
+	var defenderName = '';
+	var playerHealth = 0;
+	var defenderHealth = 0;
+	var playerBasePwr = 0;
+	var playerAttack = 0;
+	var defenderAttack = 0;
+
+    console.log("playerHealth " + playerHealth);
     
-        $("#starters").on("click", ".test", function () { //create image class for all 4 characters
-            console.log("Hi");
-            $(this).detach().appendTo("#your-character"); //moves clicked character to "Your Character" and others move to "Enemies Available to Attack"
-            $(".test").not($(this)).detach().appendTo("#enemies-available");
+        $("#fighters").on("click", ".fighter-img", function() {
+			playerName = $(this).attr("name");
+			playerHealth = parseInt($(this).attr("health-pts"));
+			playerBasePwr = parseInt($(this).attr("attack-pwr"));
+            $(this).detach().appendTo("#player");
+            $(".fighter-img").not($(this)).detach().appendTo("#enemies-available");
+			console.log("playerHealth " + playerHealth);
         });
 
-        $("#enemies-available").on("click", ".test", function () {
-            console.log("Hello");
-            $(this).detach().appendTo("#defender"); //moves clicked character to "Defender"
-            $("#results-txt").empty();
+        $("#enemies-available").on("click", ".fighter-img", function() {
+			if ($("#defender").is(':empty')) {
+				defenderName = $(this).attr("name");
+				defenderHealth = parseInt($(this).attr("health-pts"));
+				defenderAttack = parseInt($(this).attr("counter-pwr"));
+				$(this).detach().appendTo("#defender");
+				$("#results-txt").empty();
+			}
         });
 
-        //when attack button clicked
-        /*  
-        if (playerhp > 0) {
-            if (defender not empty) {
-                if (defenderhp > 0) {
-                    newattackpower += attackpower //each subsequent "Attack" click increases attack power
-                    defenderhp -= newattackpower
-                    playerhp -= defenderattackpower
-                    $("#results-txt").text("You attacked " + [Defender character] + " for " + newattackpower + " damage.<br>" + [Defender character] + " attacked you back for " + defenderattackpower + " damage.")
-                    //update playerhp text and defenderhp text
-                } else if (defenderhp <= 0 && enemies available left) {
-                    //remove defender
-                     $("#results-txt").text("You have defeated [Defender character], you can choose to fight another enemy");
-                }
-            } else if (playerhp > 0 && defender empty) {
-                $("#results-txt").text("No enemy here");
-            }
-        } else if (playerhp <= 0) {
-            $("#results-txt").text("You have been defeated...GAME OVER!!!");
-            //append restart button - on click will call reset function
-        }
-        */
-            
+		$(".attack").on("click", function() {
+			if (playerHealth > 0 && $("#enemies-available").not(':empty')) { //if player has hp and still has enemies
+				if ($("#defender").is(':empty')) { //if did not choose defender from enemies
+					$("#results-txt").text("No enemy here");
+				} else if ($("#defender").not(':empty')) { //if chose defender
+					playerAttack += playerBasePwr;
+					defenderHealth -= playerAttack;
+					playerHealth -= defenderAttack;
+					if (defenderHealth > 0) { //if defender has health
+						$("#results-txt").text("You attacked " + defenderName + " for " + playerAttack + " damage. " + defenderName + " attacked you back for " + defenderAttack + " damage.") //add br with .html??
+						//update playerHealth text and defenderHealth text
+						console.log("playerHealth " + playerHealth + " defenderHealth " + defenderHealth);
+					} else if (defenderHealth <= 0) { //if defender has no health
+						$("#defender").empty();
+						if ($("#enemies-available").not(':empty')) { //if still have enemies
+							$("#results-txt").text("You have defeated " + defenderName + ", you can choose to fight another enemy");
+						} else if ($("#enemies-available").is(':empty')) { //if no enemies left
+							$("#results-txt").text("You won!!!! GAME OVER!!!");
+							$("#results-txt").append('<br><button class="reset">Restart</button>');
+						}
+					}
+				}
+			} else if (playerHealth <= 0) {
+				$("#results-txt").text("You have been defeated...GAME OVER!!!");
+				$("#results-txt").append('<br><button class="reset">Restart</button>')
+			}
+		});
+
+		$("#results-txt").on("click", ".reset", function() {
+			playerName = '';
+			defenderName = '';
+			playerHealth = 0;
+			defenderHealth = 0;
+			playerBasePwr = 0;
+			playerAttack = 0;
+			defenderAttack = 0;
+			$("#player").empty();
+			$("#enemies-available").empty();
+			$("#defender").empty();
+			$("#results-txt").empty();
+			generateFighters();
+		});
+
+	function generateFighters() {
+		for (var i = 0; i < fightersArr.length; i++) {
+			var imgFighter = $("<img>");
+			imgFighter.addClass("fighter-img");
+			imgFighter.attr("name", fightersArr[i].name);
+			imgFighter.attr("src", "./assets/images/" + fightersArr[i].src);
+			imgFighter.attr("health-pts", fightersArr[i].health);
+			imgFighter.attr("attack-pwr", fightersArr[i].attack);
+			imgFighter.attr("counter-pwr", fightersArr[i].counter);
+			$("#fighters").append(imgFighter);
+			//display name and current hp
+		}
+	}
 
 	</script>
 	
@@ -77,31 +164,3 @@
 </body>
 </html>
 
-<!-- 
-# jQuery Assignment
-
-### Option Two: Star Wars RPG Game (Challenge)
-![Star Wars](Images/2-StarWars.jpg)
-1. [Watch the demo](https://youtu.be/klN2-ITjRt8).
-2. Here's how the app works:
-   * When the game starts, the player will choose a character by clicking on the fighter's picture. The player will fight as that character for the rest of the game.
-   * The player must then defeat all of the remaining fighters. Enemies should be moved to a different area of the screen.
-   * The player chooses an opponent by clicking on an enemy's picture.
-   * Once the player selects an opponent, that enemy is moved to a `defender area`.
-   * The player will now be able to click the `attack` button.
-     * Whenever the player clicks `attack`, their character damages the defender. The opponent will lose `HP` (health points). These points are displayed at the bottom of the defender's picture. 
-     * The opponent character will instantly counter the attack. When that happens, the player's character will lose some of their `HP`. These points are shown at the bottom of the player character's picture.
-3. The player will keep hitting the attack button in an effort to defeat their opponent.
-   * When the defender's `HP` is reduced to zero or below, remove the enemy from the `defender area`. The player character can now choose a new opponent.
-4. The player wins the game by defeating all enemy characters. The player loses the game the game if their character's `HP` falls to zero or below.
-##### Option 2 Game design notes
-* Each character in the game has 3 attributes: `Health Points`, `Attack Power` and `Counter Attack Power`.
-* Each time the player attacks, their character's Attack Power increases by its base Attack Power. 
-  * For example, if the base Attack Power is 6, each attack will increase the Attack Power by 6 (12, 18, 24, 30 and so on).
-* The enemy character only has `Counter Attack Power`. 
-  * Unlike the player's `Attack Points`, `Counter Attack Power` never changes.
-* The `Health Points`, `Attack Power` and `Counter Attack Power` of each character must differ.
-* No characters in the game can heal or recover Health Points. 
-  * A winning player must pick their characters wisely by first fighting an enemy with low `Counter Attack Power`. This will allow them to grind `Attack Power` and to take on enemies before they lose all of their `Health Points`. Healing options would mess with this dynamic.
-* Your players should be able to win and lose the game no matter what character they choose. The challenge should come from picking the right enemies, not choosing the strongest player.
--->
