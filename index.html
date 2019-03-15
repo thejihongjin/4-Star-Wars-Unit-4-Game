@@ -102,31 +102,31 @@
         });
 
 		$(".attack").on("click", function() {
-			if (playerHealth > 0 && $("#enemies-available").not(':empty')) { //if player has hp and still has enemies
-				if ($("#defender").is(':empty')) { //if did not choose defender from enemies
-					$("#results-txt").text("No enemy here");
-				} else if ($("#defender").not(':empty')) { //if chose defender
-					playerAttack += playerBasePwr;
-					defenderHealth -= playerAttack;
-					playerHealth -= defenderAttack;
-					if (defenderHealth > 0) { //if defender has health
-						$("#results-txt").text("You attacked " + defenderName + " for " + playerAttack + " damage. " + defenderName + " attacked you back for " + defenderAttack + " damage.") //add br with .html??
-						//update playerHealth text and defenderHealth text
-						console.log("playerHealth " + playerHealth + " defenderHealth " + defenderHealth);
-					} else if (defenderHealth <= 0) { //if defender has no health
-						$("#defender").empty();
-						if ($("#enemies-available").not(':empty')) { //if still have enemies
-							$("#results-txt").text("You have defeated " + defenderName + ", you can choose to fight another enemy");
-						} else if ($("#enemies-available").is(':empty')) { //if no enemies left
-							$("#results-txt").text("You won!!!! GAME OVER!!!");
-							$("#results-txt").append('<br><button class="reset">Restart</button>');
-						}
+			if (playerHealth > 0 && $("#defender").is(':empty') === false) {
+				playerAttack += playerBasePwr;
+				defenderHealth -= playerAttack;
+				playerHealth -= defenderAttack;
+				if (defenderHealth > 0) {
+					$("#results-txt").text("You attacked " + defenderName + " for " + playerAttack + " damage. " + defenderName + " attacked you back for " + defenderAttack + " damage.") //add br with .html??
+					//update playerHealth text and defenderHealth text
+					console.log("playerHealth " + playerHealth + " defenderHealth " + defenderHealth);
+				} else if (defenderHealth <= 0) {
+					$("#defender").empty();
+					if ($("#enemies-available").is(':empty') === false) {
+						$("#results-txt").text("You have defeated " + defenderName + ", you can choose to fight another enemy");
+					} else if ($("#enemies-available").is(':empty') === true) {
+						$("#results-txt").text("You won!!!! GAME OVER!!!");
+						$("#results-txt").append('<br><button class="reset">Restart</button>');
 					}
 				}
+			} else if (playerHealth > 0 && $("#defender").is(':empty') === true) {
+				$("#results-txt").text("No enemy here");
 			} else if (playerHealth <= 0) {
 				$("#results-txt").text("You have been defeated...GAME OVER!!!");
 				$("#results-txt").append('<br><button class="reset">Restart</button>')
 			}
+			console.log("$('#enemies-available').is(':empty')" + $("#enemies-available").is(':empty'));
+			console.log("$('#defender').is(':empty')" + $("#defender").is(':empty'));
 		});
 
 		$("#results-txt").on("click", ".reset", function() {
