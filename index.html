@@ -38,6 +38,7 @@
     <script type="text/javascript">
 	var fightersArr = [
 		{
+			id: 'kenobi',
 			name: 'Obi-Wan Kenobi',
 			health: 120,
 			attack: 8,
@@ -45,6 +46,7 @@
 			src: 'obi-wan-kenobi.jpg'
 		},
 		{
+			id: 'skywalker',
 			name: 'Luke Skywalker',
 			health: 100,
 			attack: 5,
@@ -52,6 +54,7 @@
 			src: 'luke_skywalker.jpg'
 		},
 		{
+			id: 'sidious',
 			name: 'Darth Sidious',
 			health: 150,
 			attack: 20,
@@ -59,6 +62,7 @@
 			src: 'darth-sidious.jpg'
 		},
 		{
+			id: 'maul',
 			name: 'Darth Maul',
 			health: 180,
 			attack: 25,
@@ -79,29 +83,31 @@
 	var playerBasePwr = 0;
 	var playerAttack = 0;
 	var defenderAttack = 0;
+	var gameOver = false;
 
-    console.log("playerHealth " + playerHealth);
+    //console.log("playerHealth " + playerHealth);
     
-        $("#fighters").on("click", ".fighter-img", function() {
-			playerName = $(this).attr("name");
-			playerHealth = parseInt($(this).attr("health-pts"));
-			playerBasePwr = parseInt($(this).attr("attack-pwr"));
-            $(this).detach().appendTo("#player");
-            $(".fighter-img").not($(this)).detach().appendTo("#enemies-available");
-			console.log("playerHealth " + playerHealth);
-        });
+    $("#fighters").on("click", ".fighter-img", function() {
+		playerName = $(this).attr("name");
+		playerHealth = parseInt($(this).attr("health-pts"));
+		playerBasePwr = parseInt($(this).attr("attack-pwr"));
+        $(this).detach().appendTo("#player");
+        $(".fighter-img").not($(this)).detach().appendTo("#enemies-available");
+		console.log("playerHealth " + playerHealth);
+    });
 
-        $("#enemies-available").on("click", ".fighter-img", function() {
-			if ($("#defender").is(':empty')) {
-				defenderName = $(this).attr("name");
-				defenderHealth = parseInt($(this).attr("health-pts"));
-				defenderAttack = parseInt($(this).attr("counter-pwr"));
-				$(this).detach().appendTo("#defender");
-				$("#results-txt").empty();
-			}
-        });
+    $("#enemies-available").on("click", ".fighter-img", function() {
+		if ($("#defender").is(':empty')) {
+			defenderName = $(this).attr("name");
+			defenderHealth = parseInt($(this).attr("health-pts"));
+			defenderAttack = parseInt($(this).attr("counter-pwr"));
+			$(this).detach().appendTo("#defender");
+			$("#results-txt").empty();
+		}
+    });
 
-		$(".attack").on("click", function() {
+	$(".attack").on("click", function() {
+		if (gameOver === false && $("#player").is(':empty') === false) {
 			if (playerHealth > 0 && $("#defender").is(':empty') === false) {
 				playerAttack += playerBasePwr;
 				defenderHealth -= playerAttack;
@@ -115,6 +121,7 @@
 					if ($("#enemies-available").is(':empty') === false) {
 						$("#results-txt").text("You have defeated " + defenderName + ", you can choose to fight another enemy");
 					} else if ($("#enemies-available").is(':empty') === true) {
+						gameOver = true;
 						$("#results-txt").text("You won!!!! GAME OVER!!!");
 						$("#results-txt").append('<br><button class="reset">Restart</button>');
 					}
@@ -122,30 +129,43 @@
 			} else if (playerHealth > 0 && $("#defender").is(':empty') === true) {
 				$("#results-txt").text("No enemy here");
 			} else if (playerHealth <= 0) {
+				gameOver = true;
 				$("#results-txt").text("You have been defeated...GAME OVER!!!");
 				$("#results-txt").append('<br><button class="reset">Restart</button>')
 			}
 			console.log("$('#enemies-available').is(':empty')" + $("#enemies-available").is(':empty'));
 			console.log("$('#defender').is(':empty')" + $("#defender").is(':empty'));
-		});
+		}
+	});
 
-		$("#results-txt").on("click", ".reset", function() {
-			playerName = '';
-			defenderName = '';
-			playerHealth = 0;
-			defenderHealth = 0;
-			playerBasePwr = 0;
-			playerAttack = 0;
-			defenderAttack = 0;
-			$("#player").empty();
-			$("#enemies-available").empty();
-			$("#defender").empty();
-			$("#results-txt").empty();
-			generateFighters();
-		});
+	$("#results-txt").on("click", ".reset", function() {
+		playerName = '';
+		defenderName = '';
+		playerHealth = 0;
+		defenderHealth = 0;
+		playerBasePwr = 0;
+		playerAttack = 0;
+		defenderAttack = 0;
+		gameOver = false;
+		$("#fighters").empty();
+		$("#player").empty();
+		$("#enemies-available").empty();
+		$("#defender").empty();
+		$("#results-txt").empty();
+		generateFighters();
+	});
 
 	function generateFighters() {
 		for (var i = 0; i < fightersArr.length; i++) {
+			//var imgContainer = $("<div>");
+			//imgContainer.addClass("container");
+			//imgContainer.attr("id", fightersArr[i].id);
+			//$("#fighters").append(imgContainer);
+
+			//var imgName = $("<span>");
+			//$("#" + fightersArr[i].name).append(imgName);
+			//$(fightersArr[i].id).append(imgName);
+
 			var imgFighter = $("<img>");
 			imgFighter.addClass("fighter-img");
 			imgFighter.attr("name", fightersArr[i].name);
@@ -154,6 +174,10 @@
 			imgFighter.attr("attack-pwr", fightersArr[i].attack);
 			imgFighter.attr("counter-pwr", fightersArr[i].counter);
 			$("#fighters").append(imgFighter);
+			//$("#" + fightersArr[i].name).append(imgFighter);
+
+			//var imgHealth = $("<span>");
+			//$("#" + fightersArr[i].name).append(imgHealth);
 			//display name and current hp
 		}
 	}
