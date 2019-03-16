@@ -7,19 +7,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="./assets/css/style.css">
 
-    <style type="text/css">
+	<style type="text/css">
+		* .container {
+			display: inline-block;
+			border: 2px solid black;
+			text-align: center;
+			margin-right: 5px;
+			padding: 5px 10px;
+		}
+
         .fighter-img {
             width: 150px;
             height: 150px;
-			margin-right: 5px;
-        }
+			margin: 0 auto;
+		}
     </style>
 </head>
 <body>
 
     Star Wars RPG!<br>
-    <!-- starting character list -->
-    <div id="fighters"></div>
+    <div id="fighters"></div> <!-- starting character list -->
     Your Character<br>
     <div id="player"></div>
     Enemies Available to Attack<br>
@@ -30,9 +37,6 @@
     <div id="defender"></div>
     <div id="results-txt"></div>
 
-<!-- 
-
--->
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript">
@@ -58,7 +62,7 @@
 			name: 'Darth Sidious',
 			health: 150,
 			attack: 20,
-			counter: 10,//20,
+			counter: 20,
 			src: 'darth-sidious.jpg'
 		},
 		{
@@ -71,6 +75,7 @@
 		},
 	]
 	
+	$("#fighters").empty();
 	$("#player").empty();
 	$("#enemies-available").empty();
 	$("#defender").empty();
@@ -84,23 +89,21 @@
 	var playerAttack = 0;
 	var defenderAttack = 0;
 	var gameOver = false;
-
-    //console.log("playerHealth " + playerHealth);
     
-    $("#fighters").on("click", ".fighter-img", function() {
+    $("#fighters").on("click", ".container", function() {
 		playerName = $(this).attr("name");
-		playerHealth = parseInt($(this).attr("health-pts"));
-		playerBasePwr = parseInt($(this).attr("attack-pwr"));
+		playerHealth = parseInt($(this).find(".fighter-img").attr("health-pts")); //need to grab child attr
+		playerBasePwr = parseInt($(this).find(".fighter-img").attr("attack-pwr"));
         $(this).detach().appendTo("#player");
-        $(".fighter-img").not($(this)).detach().appendTo("#enemies-available");
+        $(".container").not($(this)).detach().appendTo("#enemies-available");
 		console.log("playerHealth " + playerHealth);
     });
 
-    $("#enemies-available").on("click", ".fighter-img", function() {
+    $("#enemies-available").on("click", ".container", function() {
 		if ($("#defender").is(':empty')) {
-			defenderName = $(this).attr("name");
-			defenderHealth = parseInt($(this).attr("health-pts"));
-			defenderAttack = parseInt($(this).attr("counter-pwr"));
+			defenderName = $(this).find(".fighter-img").attr("name");
+			defenderHealth = parseInt($(this).find(".fighter-img").attr("health-pts"));
+			defenderAttack = parseInt($(this).find(".fighter-img").attr("counter-pwr"));
 			$(this).detach().appendTo("#defender");
 			$("#results-txt").empty();
 		}
@@ -113,9 +116,9 @@
 				defenderHealth -= playerAttack;
 				playerHealth -= defenderAttack;
 				if (defenderHealth > 0) {
-					$("#results-txt").text("You attacked " + defenderName + " for " + playerAttack + " damage. " + defenderName + " attacked you back for " + defenderAttack + " damage.") //add br with .html??
-					//update playerHealth text and defenderHealth text
-					console.log("playerHealth " + playerHealth + " defenderHealth " + defenderHealth);
+					$("#results-txt").html("You attacked " + defenderName + " for " + playerAttack + " damage. <br>" + defenderName + " attacked you back for " + defenderAttack + " damage.")
+					$("#player").find("span.fighter-health").text(playerHealth);
+					$("#defender").find("span.fighter-health").text(defenderHealth);
 				} else if (defenderHealth <= 0) {
 					$("#defender").empty();
 					if ($("#enemies-available").is(':empty') === false) {
@@ -133,8 +136,6 @@
 				$("#results-txt").text("You have been defeated...GAME OVER!!!");
 				$("#results-txt").append('<br><button class="reset">Restart</button>')
 			}
-			console.log("$('#enemies-available').is(':empty')" + $("#enemies-available").is(':empty'));
-			console.log("$('#defender').is(':empty')" + $("#defender").is(':empty'));
 		}
 	});
 
@@ -157,28 +158,33 @@
 
 	function generateFighters() {
 		for (var i = 0; i < fightersArr.length; i++) {
-			//var imgContainer = $("<div>");
-			//imgContainer.addClass("container");
-			//imgContainer.attr("id", fightersArr[i].id);
-			//$("#fighters").append(imgContainer);
 
-			//var imgName = $("<span>");
-			//$("#" + fightersArr[i].name).append(imgName);
-			//$(fightersArr[i].id).append(imgName);
+			var imgContainer = $("<div>"); // create image container
+			imgContainer.addClass("container");
+			imgContainer.attr("id", fightersArr[i].id);
 
-			var imgFighter = $("<img>");
+			var imgName = $("<span>"); // create fighter name span
+			imgName.addClass("fighter-name");
+			$(imgName).text(fightersArr[i].name);
+			$(imgContainer).append(imgName); // append to container
+			$(imgContainer).append("<br>");
+
+			var imgFighter = $("<img>"); // create fighter image
 			imgFighter.addClass("fighter-img");
 			imgFighter.attr("name", fightersArr[i].name);
 			imgFighter.attr("src", "./assets/images/" + fightersArr[i].src);
 			imgFighter.attr("health-pts", fightersArr[i].health);
 			imgFighter.attr("attack-pwr", fightersArr[i].attack);
 			imgFighter.attr("counter-pwr", fightersArr[i].counter);
-			$("#fighters").append(imgFighter);
-			//$("#" + fightersArr[i].name).append(imgFighter);
+			$(imgContainer).append(imgFighter); // append to container
+			$(imgContainer).append("<br>");
 
-			//var imgHealth = $("<span>");
-			//$("#" + fightersArr[i].name).append(imgHealth);
-			//display name and current hp
+			var imgHealth = $("<span>");
+			imgHealth.addClass("fighter-health");
+			$(imgHealth).text(fightersArr[i].health);
+			$(imgContainer).append(imgHealth); // append to container
+
+			$("#fighters").append(imgContainer); // append container to #fighters div
 		}
 	}
 
