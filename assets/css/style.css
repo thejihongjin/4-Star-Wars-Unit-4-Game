@@ -1,0 +1,13 @@
+* .container {
+    display: inline-block;
+    border: 1px solid black;
+    text-align: center;
+    margin-right: 5px;
+    padding: 5px 10px;
+}
+
+.fighter-img {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+}
